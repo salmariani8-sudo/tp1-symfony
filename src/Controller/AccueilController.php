@@ -25,4 +25,5 @@ final class AccueilController extends AbstractController
     {
         return new Response("<h1>Profil de l'utilisateur n°$id</h1>");
     }
+    
 }
