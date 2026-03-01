@@ -36,6 +36,11 @@
                                     <span class="badge bg-warning text-dark">📝 Brouillon</span>
                                 {% endif %}
                             </td>
+                            <td>
+                                <a href="{{ path('app_article_detail', {id: article.id}) }}" class="btn btn-outline-primary btn-sm">
+                                    👁️ Voir
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
