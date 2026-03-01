@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\CategorieType;
 use App\Entity\Categorie;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -65,5 +66,40 @@ class CategorieController extends AbstractController
         return $this->render('categorie/nouvelle.html.twig', [
             'formulaire' => $form,
         ]);
+    }
+    #[Route('/categories/{id}', name: 'app_categorie_show')]
+    public function show(Categorie $categorie): Response
+    {
+        return $this->render('categorie/show.html.twig', [
+            'categorie' => $categorie,
+            'articles' => $categorie->getArticles(),
+        ]);
+    }
+    #[Route('/categories/{id}/modifier', name: 'app_categorie_modifier')]
+    public function edit(Request $request, Categorie $categorie, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(CategorieType::class, $categorie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Catégorie modifiée !');
+            return $this->redirectToRoute('app_categories');
+        }
+
+        return $this->render('categorie/edit.html.twig', [
+            'formulaire' => $form,
+        ]);
+    }
+    #[Route('/categories/{id}/supprimer', name: 'app_categorie_supprimer', methods: ['POST'])]
+    public function delete(Request $request, Categorie $categorie, EntityManagerInterface $em): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$categorie->getId(), $request->request->get('_token'))) {
+            $em->remove($categorie);
+            $em->flush();
+            $this->addFlash('success', 'Catégorie supprimée !');
+        }
+
+        return $this->redirectToRoute('app_categories');
     }
 }

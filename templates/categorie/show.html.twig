@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Catégorie {{ categorie.nom }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1>📂 {{ categorie.nom }}</h1>
+
+        {% if categorie.description %}
+            <p class="text-muted">{{ categorie.description }}</p>
+        {% endif %}
+
+        <h3 class="mt-4">Articles liés</h3>
+        {% if categorie.articles is empty %}
+            <p>Aucun article dans cette catégorie.</p>
+        {% else %}
+            <ul class="list-group">
+                {% for article in categorie.articles %}
+                    <li class="list-group-item">
+                        <a href="{{ path('app_article_show', {id: article.id}) }}">
+                            {{ article.titre }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{{ path('app_categories') }}" class="btn btn-link">← Retour aux catégories</a>
+            <a href="{{ path('app_categorie_modifier', {id: categorie.id}) }}" class="btn btn-primary">✏️ Modifier</a>
+            <form method="post" action="{{ path('app_categorie_supprimer', {id: categorie.id}) }}" style="display:inline-block" onsubmit="return confirm('Supprimer cette catégorie ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ categorie.id) }}">
+                <button class="btn btn-danger">🗑 Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
